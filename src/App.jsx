@@ -7,15 +7,19 @@ import { MetricsBar } from './components/MetricsBar';
 import { ControlToolbar } from './components/ControlToolbar';
 import { QueueBoard } from './components/QueueBoard';
 import { QueueTable } from './components/QueueTable';
+import { AnalyticsView } from './components/AnalyticsView';
 import { AddCustomerModal } from './components/AddCustomerModal';
 import { TicketModal } from './components/TicketModal';
 import { HomePage } from './pages/HomePage';
+import { ServicesPage } from './pages/ServicesPage';
+import { CustomerKioskPage } from './pages/CustomerKioskPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
 import { STATUSES } from './types/queue';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState('home'); // 'home' | 'dashboard' | 'about' | 'contact'
+  const [activeTab, setActiveTab] = useState('home'); // 'home' | 'services' | 'kiosk' | 'dashboard' | 'about' | 'contact'
+  const [dashSubTab, setDashSubTab] = useState('queue'); // 'queue' | 'analytics'
 
   const {
     customers,
@@ -79,17 +83,31 @@ export function App() {
 
   return (
     <div className="app-container">
-      {/* Top Navbar (Home, About, Contact) */}
+      {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
 
-      {/* Tab Pages Routing */}
+      {/* Main Tab Routing */}
       {activeTab === 'home' && (
         <HomePage
+          onNavigate={(tab) => setActiveTab(tab)}
+          counters={counters}
+        />
+      )}
+
+      {activeTab === 'services' && (
+        <ServicesPage
           onLaunchDashboard={() => setActiveTab('dashboard')}
-          onOpenContact={() => setActiveTab('contact')}
+        />
+      )}
+
+      {activeTab === 'kiosk' && (
+        <CustomerKioskPage
+          customers={rawCustomers}
+          now={now}
+          onOpenAddModal={() => setIsAddModalOpen(true)}
         />
       )}
 
@@ -115,36 +133,58 @@ export function App() {
           {/* Real-Time Metrics & Counter Bar */}
           <MetricsBar counters={counters} />
 
-          {/* Control Toolbar: Search & Filter */}
-          <ControlToolbar
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            selectedService={selectedService}
-            setSelectedService={setSelectedService}
-            selectedPriority={selectedPriority}
-            setSelectedPriority={setSelectedPriority}
-            viewMode={viewMode}
-            setViewMode={setViewMode}
-            onClearFilters={handleClearFilters}
-          />
+          {/* Sub-tab Navigation (Live Queue Desk vs Analytics Telemetry) */}
+          <div className="dash-sub-tabs">
+            <button 
+              className={`sub-tab-btn ${dashSubTab === 'queue' ? 'active' : ''}`}
+              onClick={() => setDashSubTab('queue')}
+            >
+              Live Queue Desk
+            </button>
+            <button 
+              className={`sub-tab-btn ${dashSubTab === 'analytics' ? 'active' : ''}`}
+              onClick={() => setDashSubTab('analytics')}
+            >
+              Desk Analytics & SLA
+            </button>
+          </div>
 
-          {/* Primary Workspace View (Kanban Board vs List Table) */}
-          {viewMode === 'board' ? (
-            <QueueBoard
-              customers={customers}
-              now={now}
-              onMove={handleMoveCustomer}
-              onRemove={handleConfirmDelete}
-              onPrintTicket={(cust) => setSelectedTicketCustomer(cust)}
-            />
+          {dashSubTab === 'analytics' ? (
+            <AnalyticsView customers={rawCustomers} counters={counters} />
           ) : (
-            <QueueTable
-              customers={customers}
-              now={now}
-              onMove={handleMoveCustomer}
-              onRemove={handleConfirmDelete}
-              onPrintTicket={(cust) => setSelectedTicketCustomer(cust)}
-            />
+            <>
+              {/* Control Toolbar: Search & Filter */}
+              <ControlToolbar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                selectedService={selectedService}
+                setSelectedService={setSelectedService}
+                selectedPriority={selectedPriority}
+                setSelectedPriority={setSelectedPriority}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                onClearFilters={handleClearFilters}
+              />
+
+              {/* Primary Workspace View (Kanban Board vs List Table) */}
+              {viewMode === 'board' ? (
+                <QueueBoard
+                  customers={customers}
+                  now={now}
+                  onMove={handleMoveCustomer}
+                  onRemove={handleConfirmDelete}
+                  onPrintTicket={(cust) => setSelectedTicketCustomer(cust)}
+                />
+              ) : (
+                <QueueTable
+                  customers={customers}
+                  now={now}
+                  onMove={handleMoveCustomer}
+                  onRemove={handleConfirmDelete}
+                  onPrintTicket={(cust) => setSelectedTicketCustomer(cust)}
+                />
+              )}
+            </>
           )}
         </div>
       )}
