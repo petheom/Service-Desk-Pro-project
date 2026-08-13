@@ -13,7 +13,7 @@ export function TicketModal({ customer, onClose }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay ticket-modal-overlay" onClick={onClose}>
       <div 
         className="ticket-container" 
         onClick={(e) => e.stopPropagation()}
@@ -23,6 +23,7 @@ export function TicketModal({ customer, onClose }) {
           className="modal-close" 
           onClick={onClose}
           style={{ position: 'absolute', right: '1rem', top: '1rem', color: '#64748b' }}
+          aria-label="Close ticket"
         >
           <X size={20} />
         </button>
@@ -45,13 +46,13 @@ export function TicketModal({ customer, onClose }) {
           <p><strong>Issued At:</strong> {formatTimeHHMM(customer.createdAt)}</p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+        <div className="ticket-actions" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
           <button className="btn btn-secondary" onClick={onClose} style={{ color: '#0f172a', borderColor: '#cbd5e1' }}>
             Close
           </button>
           <button className="btn btn-primary" onClick={handlePrint}>
             <Printer size={16} />
-            <span>Print Ticket</span>
+            <span>Print / Save PDF</span>
           </button>
         </div>
       </div>

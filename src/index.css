@@ -1164,3 +1164,125 @@ body {
   color: var(--text-secondary);
 }
 
+/* ==========================================================================
+   Print & PDF Export Styles (Fixes Blank PDF / Token Printing Issue)
+   ========================================================================== */
+@media print {
+  @page {
+    size: auto;
+    margin: 10mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide all background app elements during print */
+  .app-container > *:not(.ticket-modal-overlay),
+  .top-navbar,
+  .hero-section,
+  .features-section,
+  .content-page,
+  header,
+  nav,
+  .metrics-bar,
+  .control-toolbar,
+  .queue-board,
+  .table-container,
+  footer {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Make sure modal overlay resets for paper printing */
+  .modal-overlay.ticket-modal-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    padding: 20px 0 !important;
+    margin: 0 !important;
+    z-index: 99999 !important;
+  }
+
+  /* Format ticket container specifically for PDF export / physical printing */
+  .ticket-container {
+    box-shadow: none !important;
+    border: 2px dashed #0284c7 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    width: 100% !important;
+    max-width: 400px !important;
+    margin: 0 auto !important;
+    padding: 2rem !important;
+    border-radius: 12px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide print dialog controls and close icons inside PDF/Print output */
+  .modal-close,
+  .ticket-actions,
+  .ticket-container button {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Force high-contrast text and colors */
+  .ticket-header h2 {
+    color: #0f172a !important;
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+  }
+
+  .ticket-header p {
+    color: #475569 !important;
+    font-size: 0.875rem !important;
+  }
+
+  .ticket-token {
+    background: #e0f2fe !important;
+    color: #0284c7 !important;
+    border: 2px solid #38bdf8 !important;
+    font-size: 3.5rem !important;
+    font-weight: 900 !important;
+    margin: 1.25rem 0 !important;
+    padding: 0.75rem !important;
+    border-radius: 12px !important;
+    text-align: center !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .ticket-details {
+    margin-bottom: 0 !important;
+  }
+
+  .ticket-details p {
+    color: #334155 !important;
+    font-size: 1rem !important;
+    margin: 0.4rem 0 !important;
+  }
+
+  .ticket-details strong {
+    color: #0f172a !important;
+  }
+}
+
+
